@@ -27,10 +27,9 @@ public class AuthController {
 
     @PostMapping("/send-otp")
     public ResponseEntity<java.util.Map<String, String>> sendOtp(@RequestBody AuthRequest request) {
-        String otp = otpService.sendOrResendOtp(request.getPhone());
+        otpService.sendOrResendOtp(request.getPhone());
         java.util.Map<String, String> response = new java.util.HashMap<>();
         response.put("message", "OTP sent successfully");
-        response.put("otp", otp);
         return ResponseEntity.ok(response);
     }
 

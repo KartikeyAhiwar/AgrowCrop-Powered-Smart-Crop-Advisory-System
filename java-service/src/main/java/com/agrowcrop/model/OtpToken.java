@@ -19,10 +19,12 @@ public class OtpToken {
     private String phone;
     private String otp;
     private Instant expiresAt;
+    private int attempts;
 
     public OtpToken(String phone, String otp, Instant expiresAt) {
         this.phone = phone;
         this.otp = otp;
         this.expiresAt = expiresAt;
+        this.attempts = 0;
     }
 }

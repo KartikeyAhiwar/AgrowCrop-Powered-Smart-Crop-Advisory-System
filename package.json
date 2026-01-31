@@ -7,9 +7,10 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "frontend": "cd frontend && npm run dev",
-    "dev:all": "concurrently \"npm run dev\" \"npm run frontend\"",
+    "dev:node": "concurrently \"npm run dev\" \"npm run frontend\"",
+    "dev:all": "concurrently \"npm run backend:java\" \"npm run frontend\"",
     "start:all": "concurrently \"npm start\" \"npm run frontend\"",
-    "backend:java": "cd java-service && mvnw.cmd spring-boot:run -DskipTests",
+    "backend:java": "start-backend.bat",
     "dev:java": "concurrently \"npm run backend:java\" \"npm run frontend\""
   },
   "keywords": ["farming", "agriculture", "crop-recommendation"],

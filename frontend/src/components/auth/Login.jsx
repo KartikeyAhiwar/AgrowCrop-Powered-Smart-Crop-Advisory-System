@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './auth.css';
+import { useAuth } from '../../context/AuthProvider';
+import { SignIn } from '@clerk/clerk-react';
 
 const API_BASE_URL = '/api/auth';
 
-export default function Login({ onLoginSuccess }) {
+export default function Login() {
+    const { login, mode } = useAuth();
     const [phone, setPhone] = useState('');
     const [otpSent, setOtpSent] = useState(false);
     const [otp, setOtp] = useState('');
@@ -13,33 +16,46 @@ export default function Login({ onLoginSuccess }) {
     const [devMode, setDevMode] = useState(false);
     const [devOtp, setDevOtp] = useState('');
 
+    // If using Clerk, render Clerk's SignIn component
+    if (mode === 'clerk') {
+        return (
+            <div className="auth-container">
+                <div className="auth-header">
+                    <h1>AgrowCrop</h1>
+                    <p>Expert farming tools for every farmer</p>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+                    <SignIn />
+                </div>
+            </div>
+        );
+    }
+
     const handleSendOtp = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
         try {
-            const response = await axios.post(`${API_BASE_URL}/send-otp`, { phone });
+            // Ensure phone has +91 prefix
+            const formattedPhone = phone.startsWith('+91') ? phone : `+91${phone}`;
+            const response = await axios.post(`${API_BASE_URL}/send-otp`, { phone: formattedPhone });
             if (response.data) {
                 setOtpSent(true);
             }
         } catch (err) {
             // Auto-enable dev mode - fetch OTP from dev endpoint (same as PowerShell script)
-            try {
-                const devResponse = await axios.get(`http://localhost:5000/dev-otp/generate?phone=${phone}`);
-                const fetchedOtp = devResponse.data.otp;
-                console.log(`%c🔑 DEV MODE OTP: ${fetchedOtp}`, 'color: green; font-size: 20px; font-weight: bold');
-                console.log('%cThis OTP matches the PowerShell script output!', 'color: orange; font-size: 14px');
-                alert(`DEV MODE: Check console (F12) for OTP. Same OTP shown in PowerShell!`);
-                setDevOtp(fetchedOtp);
-                setDevMode(true);
-                setOtpSent(true);
-            } catch (devErr) {
-                console.error('Dev endpoint also failed, generating random OTP:', devErr);
+            // ONLY in local development
+            if (import.meta.env.MODE === 'development') {
+                // Generate safe random fallback OTP for dev
                 const randomOtp = Math.floor(100000 + Math.random() * 900000).toString();
-                console.log(`%c🔑 FALLBACK OTP: ${randomOtp}`, 'color: red; font-size: 20px; font-weight: bold');
+                console.log(`%c🔑 DEV MODE OTP: ${randomOtp}`, 'color: green; font-size: 20px; font-weight: bold');
+                console.log('%cThis is a generated OTP because backend is unreachable.', 'color: orange; font-size: 14px');
+                alert(`DEV MODE: Check console (F12) for OTP: ${randomOtp}`);
                 setDevOtp(randomOtp);
                 setDevMode(true);
                 setOtpSent(true);
+            } else {
+                setError('Failed to send OTP. Please try again.');
             }
         } finally {
             setLoading(false);
@@ -55,10 +71,8 @@ export default function Login({ onLoginSuccess }) {
             if (devMode) {
                 if (otp === devOtp) {
                     const mockToken = 'dev_token_' + Date.now();
-                    localStorage.setItem('agro_token', mockToken);
-                    localStorage.setItem('agro_user', JSON.stringify({ phone, role: 'ROLE_FARMER' }));
-                    if (onLoginSuccess) onLoginSuccess({ token: mockToken, role: 'ROLE_FARMER' });
-                    window.location.href = '/';
+                    const user = { phone, role: 'ROLE_FARMER' };
+                    login(mockToken, user);
                     return;
                 } else {
                     setError('Invalid OTP. Please try again.');
@@ -67,15 +81,12 @@ export default function Login({ onLoginSuccess }) {
                 }
             }
 
-            const response = await axios.post(`${API_BASE_URL}/verify-otp`, { phone, otp });
+            const formattedPhone = phone.startsWith('+91') ? phone : `+91${phone}`;
+            const response = await axios.post(`${API_BASE_URL}/verify-otp`, { phone: formattedPhone, otp });
             const { token, role } = response.data;
 
-            // Store token and user info
-            localStorage.setItem('agro_token', token);
-            localStorage.setItem('agro_user', JSON.stringify({ phone, role }));
+            login(token, { phone, role });
 
-            if (onLoginSuccess) onLoginSuccess({ token, role });
-            window.location.href = '/'; // Redirect to home
         } catch (err) {
             setError(err.response?.data || 'Invalid OTP. Please try again.');
         } finally {
@@ -136,8 +147,6 @@ export default function Login({ onLoginSuccess }) {
                     </button>
                 </form>
             )}
-
-
 
             {error && <div className="error-message">{error}</div>}
         </div>
