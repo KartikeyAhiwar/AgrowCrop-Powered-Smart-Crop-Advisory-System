@@ -29,5 +29,8 @@ RUN apk add --no-cache wget
 EXPOSE 8080
 
 # Run the application
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+    CMD wget -qO- http://localhost:8080/api/market-prices/health || exit 1
