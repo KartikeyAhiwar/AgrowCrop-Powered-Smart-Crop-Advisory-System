@@ -126,7 +126,25 @@ export class MockMarketPriceService {
             'Sesame': 10500, 'Castor': 6400
         }[crop] || 2000;
 
-        const districts = district ? [district] : ['District A', 'District B', 'District C', 'District D', 'District E'];
+        let districts = [];
+        if (district) {
+            districts = [district];
+        } else {
+            // Realistic fallback districts based on state
+            const stateDistricts = {
+                "Madhya Pradesh": ["Indore", "Bhopal", "Jabalpur", "Gwalior", "Sagar"],
+                "Maharashtra": ["Pune", "Nagpur", "Nashik", "Aurangabad", "Solapur"],
+                "Uttar Pradesh": ["Kanpur", "Lucknow", "Agra", "Varanasi", "Prayagraj"],
+                "Punjab": ["Ludhiana", "Amritsar", "Jalandhar", "Patiala", "Bathinda"],
+                "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot", "Bhavnagar"],
+                "Rajasthan": ["Jaipur", "Jodhpur", "Kota", "Bikaner", "Ajmer"],
+                "Haryana": ["Faridabad", "Gurugram", "Panipat", "Ambala", "Karnal"],
+                "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Salem", "Tiruehm"],
+                "Karnataka": ["Bangalore", "Mysore", "Hubli", "Belgaum", "Mangalore"]
+            };
+            // Default list if state not found
+            districts = stateDistricts[state] || ["Central City", "North City", "South City", "East City", "Capital City"];
+        }
 
         const mandis = districts.map((dist, index) => {
             const priceVariation = (Math.random() - 0.5) * 200; // ±100

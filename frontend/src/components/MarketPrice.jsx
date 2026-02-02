@@ -14,7 +14,7 @@ const MarketPrice = () => {
     const [trendData, setTrendData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [useMockData, setUseMockData] = useState(true); // Use mock data by default
+    const [useMockData, setUseMockData] = useState(false); // Try real backend first
 
     // Options for dropdowns
     // Comprehensive crop list with regional varieties (22 crops)
