@@ -3,7 +3,6 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import WeatherWidget from './WeatherWidget'
 import { useWeather } from '../context/WeatherContext'
-import ClerkTest from './ClerkTest'
 import './Home.css'
 
 const Home = () => {
@@ -11,7 +10,6 @@ const Home = () => {
 
   return (
     <div className="home">
-      <ClerkTest />
       <div className="hero">
         <div className="hero-content">
           <h1 className="hero-title">

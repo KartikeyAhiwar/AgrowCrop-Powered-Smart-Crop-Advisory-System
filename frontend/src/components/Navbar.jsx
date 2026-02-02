@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { UserButton, useAuth } from "@clerk/clerk-react";
 import ThemeToggle from './ThemeToggle'
 import { useWeather } from '../context/WeatherContext'
 import { NavbarWeatherIcon, WeatherStatusIcon } from './WeatherIcons'
@@ -49,23 +50,9 @@ const Navbar = () => {
             </span>
           </li>
           <li>
-            <button
-              onClick={() => {
-                localStorage.clear();
-                window.location.reload();
-              }}
-              style={{
-                background: '#d32f2f',
-                color: 'white',
-                border: 'none',
-                padding: '6px 12px',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginLeft: '10px'
-              }}
-            >
-              Logout
-            </button>
+            <div style={{ marginLeft: '10px', display: 'flex', alignItems: 'center' }}>
+              <UserButton afterSignOutUrl="/" />
+            </div>
           </li>
         </ul>
       </div>
