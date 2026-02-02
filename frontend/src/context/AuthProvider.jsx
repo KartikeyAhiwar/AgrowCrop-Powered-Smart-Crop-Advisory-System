@@ -50,7 +50,7 @@ const ClerkAuthAdapter = ({ children }) => {
         const fetchToken = async () => {
             if (isSignedIn) {
                 try {
-                    const t = await getToken();
+                    const t = await getToken({ template: 'agrowcrop-api' });
                     if (mounted) setToken(t);
                 } catch (e) {
                     console.error("Failed to fetch Clerk token", e);
