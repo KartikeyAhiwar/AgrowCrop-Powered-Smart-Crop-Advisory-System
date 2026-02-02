@@ -92,19 +92,19 @@ const ClerkAuthAdapter = ({ children }) => {
 };
 
 export const AuthProvider = ({ children }) => {
-    const authMode = import.meta.env.VITE_AUTH_MODE || 'local';
+    // If we have a Clerk key, we assume main.jsx has already wrapped the App in ClerkProvider.
+    // We just need to use the adapter to expose the context.
     const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
-    if (authMode === 'clerk' && clerkPubKey) {
+    if (clerkPubKey) {
         return (
-            <ClerkProvider publishableKey={clerkPubKey}>
-                <ClerkAuthAdapter>
-                    {children}
-                </ClerkAuthAdapter>
-            </ClerkProvider>
+            <ClerkAuthAdapter>
+                {children}
+            </ClerkAuthAdapter>
         );
     }
 
+    // Fallback to local auth if no Clerk key is found
     return <LocalAuthProvider>{children}</LocalAuthProvider>;
 };
 
