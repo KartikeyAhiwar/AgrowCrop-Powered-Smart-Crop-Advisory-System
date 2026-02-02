@@ -1,4 +1,5 @@
 
+
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './components/Home'
 import Recommendations from './components/Recommendations'
@@ -10,6 +11,8 @@ import Login from './components/auth/Login'
 import WeatherBackground from './components/WeatherBackground'
 import { WeatherProvider } from './context/WeatherContext'
 import { AuthProvider, useAuth } from './context/AuthProvider'
+
+console.log("App rendered");
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoaded } = useAuth();
