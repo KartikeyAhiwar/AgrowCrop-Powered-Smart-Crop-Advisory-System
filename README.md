@@ -41,6 +41,7 @@ AgroCrop/
 | **Backend API** | http://localhost:8080 | REST endpoints |
 | **MongoDB** | localhost:27017 | Price data storage |
 
+| **WebsiteLink** | https://agrowcrop.codefastweb.online/ | Hosted |
 ---
 
 ## 🧠 Tech Stack
